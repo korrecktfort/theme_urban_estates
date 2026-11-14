@@ -18,8 +18,18 @@
         ?>           
         </nav>
         
-        <div class="top-bar-menu-address address-line">    
+        <div class="top-bar-menu-address address-line desktop">    
             <?php echo do_shortcode('[address]'); ?>
+        </div>
+
+        <div class="top-bar-menu-address address-line mobile">    
+            <?php echo do_shortcode('[address]'); ?>
+        </div>
+
+        <div class="top-bar-menu-address address-line mobile-s">    
+            <p><?php echo get_ue_option('cp_name')?></p>
+            <p><?php echo get_ue_option('cp_address_street')?></p>
+            <p><?php echo get_ue_option('cp_address_zip_city')?></p>
         </div>
 
     </div>    

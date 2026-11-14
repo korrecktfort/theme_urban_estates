@@ -1,14 +1,28 @@
 <?php
-function get_adress_string()
+function get_adress_string($args)
 {
-    $address = get_ue_option('cp_name') . ' | ' . get_ue_option('cp_address_street') . ' | ' . get_ue_option('cp_address_zip_city');
+    $seperator = isset($args['seperator']) ? $args['seperator'] : ' | ';
+
+    $address = get_ue_option('cp_name') . $seperator . get_ue_option('cp_address_street') . $seperator . get_ue_option('cp_address_zip_city');
     return '<p>' . $address . '</p>';
 }
 add_shortcode('address', 'get_adress_string');
 
 #region Buttons
 function button($attr)
-{    
+{   
+    $mainSetup = '';
+        
+    if(!empty($attr['link']))
+    {
+        $mainSetup .= 'href="' . $attr['link'] . '"';
+    }
+
+    if(!empty($attr['onClick']))
+    {
+        $mainSetup .= 'onClick="' . $attr['onClick'] . '"';
+    }
+
     $symbol = '';
 
     if(!empty($attr['symbol']))
@@ -16,7 +30,7 @@ function button($attr)
         $symbol = $attr['symbol'];
     }
 
-    echo '<a  href="' . $attr['link'] . '"><div class="button">'. $symbol . '<p>' . $attr['text'] . '</p></div></a>';  
+    echo '<a ' . $mainSetup . '"><div class="button">'. $symbol . '<p>' . $attr['text'] . '</p></div></a>';  
 }
 add_shortcode('button', 'button');
 
@@ -59,7 +73,7 @@ add_shortcode('button_search', 'button_search');
 
 function button_expose()
 {
-    return button(['symbol' => '<div class="arrow"></div>','text' => 'Expose anfordern', 'link' => 'mailto:' . get_ue_option('cp_email')]);    
+    return button(['symbol' => '<div class="arrow"></div>','text' => 'Exposé anfordern', 'link' => '#bottom', 'onClick' => "document.getElementById('bottom').scrollIntoView({ behavior: 'smooth' });"]);    
 }
 add_shortcode('button_expose', 'button_expose');
 
@@ -142,14 +156,26 @@ add_shortcode('data_location', 'data_location');
 
 function data_price($attr)
 {
-    $formattedPrice = number_format($attr['value'], 0, ',', '.');
+    // 'kaufpreis' is empty for rented properties (no purchase price), which
+    // crashes number_format() with a TypeError in PHP 8 if passed as-is.
+    if (!is_numeric($attr['value'])) {
+        return '';
+    }
+
+    $formattedPrice = number_format((float) $attr['value'], 0, ',', '.');
     return entry_data_pair(['label' => 'Kaufpreis', 'value' => $formattedPrice . ' €']);
 }
 add_shortcode('data_price', 'data_price');
 
 function data_price_symbol($attr)
 {
-    $formattedPrice = number_format($attr['value'], 0, ',', '.');
+    // 'kaufpreis' is empty for rented properties (no purchase price), which
+    // crashes number_format() with a TypeError in PHP 8 if passed as-is.
+    if (!is_numeric($attr['value'])) {
+        return '';
+    }
+
+    $formattedPrice = number_format((float) $attr['value'], 0, ',', '.');
     return entry_data_pair(['label' => 'Kaufpreis', 'value' => $formattedPrice . ' €', 'symbol' => 'symbol-price']);
 }
 add_shortcode('data_price_symbol', 'data_price_symbol');
@@ -228,35 +254,51 @@ add_shortcode('data_sleeping_room_symbol', 'data_sleeping_room_symbol');
 
 function data_property_size($attr)
 {
-    return entry_data_pair(['label' => 'Grundstücksfläche', 'value' => $attr['value'] . ' m²']);
+    return entry_data_pair(['label' => 'Grundstück', 'value' => $attr['value'] . ' m²']);
 }
 add_shortcode('data_property_size', 'data_property_size');
 
 function data_property_size_symbol($attr)
 {
-    return entry_data_pair(['label' => 'Grundstücksfläche', 'value' => $attr['value'] . ' m²', 'symbol' => 'symbol-property-size']);
+    return entry_data_pair(['label' => 'Grundstück', 'value' => $attr['value'] . ' m²', 'symbol' => 'symbol-property-size']);
 }
 add_shortcode('data_property_size_symbol', 'data_property_size_symbol');
 #endregion
 
 /*#region Display Entries*/
-function display_entries($attr)
+function display_entries($args)
 {
+    if(!array_key_exists('category_name', $args))
+    {
+        $args['category_name'] = '';
+    }
+
+    if(!array_key_exists('selection_bar', $args))
+    {
+        $args['selection_bar'] = true;
+    }
+
     ob_start();
-    get_template_part('template-parts/entry-query-collection', null, $attr); 
+    get_template_part('template-parts/entry-query-collection', null, ['references' => false, 'selection_bar' => $args['selection_bar'], 'category_name' => $args['category_name']]); 
     return ob_get_clean();
 }
 add_shortcode('display_entries', 'display_entries');
 
-function display_entries_berlin()
+function display_entries_references($args)
 {
-    return display_entries(['category_name' => 'berlin', 'selection_bar' => true]);
-}
-add_shortcode('display_entries_berlin', 'display_entries_berlin');
+    if(!array_key_exists('category_name', $args))
+    {
+        $args['category_name'] = '';
+    }
 
-function display_entries_references()
-{
-    return display_entries(['category_name' => 'referenzen', 'selection_bar' => false]);
+    if(!array_key_exists('selection_bar', $args))
+    {
+        $args['selection_bar'] = false;
+    }
+
+    ob_start();
+    get_template_part('template-parts/entry-query-collection', null, ['references' => true, 'selection_bar' => $args['selection_bar'], 'category_name' => $args['category_name']]);
+    return ob_get_clean();
 }
 add_shortcode('display_entries_references', 'display_entries_references');
 /*#endregion*/

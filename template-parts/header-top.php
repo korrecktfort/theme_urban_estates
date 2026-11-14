@@ -17,15 +17,21 @@ else:
 endif;
 ?>      
 
+<?php
+    if(isset($args['top-bar-color'])):
+        $top_container_color = 'style="background-color: '.$args['top-bar-color'].';"';
+    endif;        
+?>
+
 <div class="burger-toggle top-container <?php echo $top_container_height_class?>" <?php echo($top_container_color)?>>     
     <div class="top-container-relative-parent">
         <!-- Image - First-->
-        <?php get_template_part('template-parts/top-bar-image'); ?>
+        <?php get_template_part('template-parts/top-bar-image', null, $args); ?>
 
         <!-- Menu - Second -->
-        <?php get_template_part('template-parts/top-bar-menu'); ?>
+        <?php get_template_part('template-parts/top-bar-menu', null, $args); ?>
 
         <!-- Main - Third -->
-        <?php get_template_part('template-parts/top-bar-main'); ?>
+        <?php get_template_part('template-parts/top-bar-main', null, $args); ?>
     </div>
 </div>

@@ -21,7 +21,7 @@ if(!empty(get_field('comment-image')))
 $image_data = get_image_data($img_url);
 $style = "background-image: url('" . $image_data['url'] . "');";
 
-$comment = get_post_meta($id, 'objekttitel_original', true);
+$comment = get_post_meta($id, 'sonstige_angaben', true);
 $commentator = get_post_meta($id, 'kontaktperson_vorname', true) . ' ' . get_post_meta($id, 'kontaktperson_name', true);
 $commentator_title = '';
 
@@ -43,12 +43,21 @@ if(!empty($personal_number))
 
 ?>
 
-<div class="body-container">
+
+<?php if(!empty($comment)):?>
+<div class="body-container desktop">
     <div class="entry-comment">
-        <div class="entry-comment-area image" alt="<?php echo $image_data['alt']; ?>" style="<?php echo $style;?>">
-        </div>       
+        <div class="entry-comment-area image" alt="<?php echo $image_data['alt']; ?>" style="<?php echo $style;?>"></div>       
         <div class ="entry-comment-area-container-text">
             <?php get_template_part('template-parts/comment', null, array('comment' => $comment, 'commentator' => $commentator, 'commentator_title' => $commentator_title)); ?>
         </div>
     </div>
 </div>
+
+<div class="mobile-comment mobile">
+    <div class="entry-comment-area image" alt="<?php echo $image_data['alt']; ?>" style="<?php echo $style;?>"></div>
+    <div class ="entry-comment-area-container-text">
+        <?php get_template_part('template-parts/comment', null, array('comment' => $comment, 'commentator' => $commentator, 'commentator_title' => $commentator_title)); ?>
+    </div>
+</div>
+<?php endif; ?>

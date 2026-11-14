@@ -7,9 +7,15 @@ require_once 'urban-estates-create-posts.php';
 
 function enqueue_style_async() {
     wp_dequeue_style( 'theme-urban-estates-style' );
-    wp_enqueue_style( 'theme-urban-estates-style', get_stylesheet_uri(), array(), '1.0', 'all' );    
+    wp_enqueue_style( 'theme-urban-estates-style', get_stylesheet_uri(), array(), filemtime(get_template_directory() . '/style.css'), 'all' );    
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_style_async', 9999 );
+
+function enqueue_scripts_async(){
+    wp_dequeue_script( 'masonry-script' );
+    wp_enqueue_script( 'masonry-script', get_template_directory_uri() . '/js/theme/masonry.js', array('jquery'), '1.0', true );
+}
+add_action( 'wp_enqueue_scripts', 'enqueue_scripts_async', 9999 );
 
 /* Allow .webp uploads */
 function enable_webp_upload( $mime_types ) {
@@ -19,36 +25,48 @@ function enable_webp_upload( $mime_types ) {
 add_filter( 'upload_mimes', 'enable_webp_upload' );
 
 /* Return breadcrumbs*/
-function get_breadcrumbs() {
-    global $post;
-    $homeLink = get_home_url();
+function get_breadcrumbs($args) {
+    
     $breadcrumb = array();
-    $pageUrl = get_permalink();
+    $length = 2; // Strip breadcrumb array to length of 2 
 
-    // Remove home URL
-    $pageUrl = str_replace($homeLink, '', $pageUrl);
-
-    // Split URL into parts
-    $urlParts = explode('/', trim($pageUrl, '/'));
-
-    // Add home breadcrumb
-    $breadcrumb[] = '<a href="' . esc_url($homeLink) . '">Start</a>';
-
-    // Add other breadcrumbs
-    $breadcrumbUrl = $homeLink;    
-    foreach ($urlParts as $part) 
-    {                       
-        if(empty($part)){
-            continue;
+    if(isset($args['breadcrumbs'])){
+        foreach($args['breadcrumbs'] as $customBreadcrumb)
+        {            
+            $breadcrumb[] = '<a href="' . esc_url($customBreadcrumb['url']) . '">'. $customBreadcrumb['text'] .'</a>';    
         }
-        
-        $breadcrumbUrl .= '/' . $part;
-        $breadcrumb[] = '<a href="' . esc_url($breadcrumbUrl) . '">' . esc_html(ucfirst($part)) . '</a>';        
-    }
-
-    // Strip breadcrumb array to length of 2
-    if (count($breadcrumb) > 2) {
-        $breadcrumb = array_slice($breadcrumb, 0, 2);
+        $length = count($args['breadcrumbs']); // override length
+    } 
+    else
+    {
+        global $post;
+        $homeLink = get_home_url();
+        $pageUrl = get_permalink();
+    
+        // Remove home URL
+        $pageUrl = str_replace($homeLink, '', $pageUrl);
+    
+        // Split URL into parts
+        $urlParts = explode('/', trim($pageUrl, '/'));
+    
+        // Add home breadcrumb
+        $breadcrumb[] = '<a href="' . esc_url($homeLink) . '">Start</a>';
+    
+        // Add other breadcrumbs
+        $breadcrumbUrl = $homeLink;    
+        foreach ($urlParts as $part) 
+        {                       
+            if(empty($part)){
+                continue;
+            }
+            
+            $breadcrumbUrl .= '/' . $part;
+            $breadcrumb[] = '<a href="' . esc_url($breadcrumbUrl) . '">' . esc_html(ucfirst($part)) . '</a>';        
+        }
+    }    
+    
+    if (count($breadcrumb) > $length) {
+        $breadcrumb = array_slice($breadcrumb, 0, $length);
     }    
 
     $spacer = '<p class="font-spacer">|</p>';
@@ -56,7 +74,6 @@ function get_breadcrumbs() {
     if(count($breadcrumb) == 1){
         $spacer = '';
     }
-
 
     // Convert breadcrumb array to string with the specified separator
     $breadcrumb_string = implode($spacer, $breadcrumb);
@@ -115,4 +132,6 @@ function disable_emojis_tinymce($plugins) {
 // } );
 
 // add_filter( 'should_load_separate_core_block_assets', '__return_true' );
+
+
 ?>

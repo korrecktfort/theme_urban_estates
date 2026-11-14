@@ -5,9 +5,9 @@ function enqueue_adobe_style_async() {
 
     $CookieConsent = array_column(array_map(function ($pair) {
         return explode(':', $pair);
-    }, explode(',', $_COOKIE['cookieyes-consent'] ?? '')), 1, 0);
+    }, explode(',', $_COOKIE['cookieyes-consent'])), 1, 0);
 
-    if (filter_var($CookieConsent['functional'] ?? false, FILTER_VALIDATE_BOOLEAN)) 
+    if (filter_var($CookieConsent['functional'], FILTER_VALIDATE_BOOLEAN)) 
     {
         wp_enqueue_style( 'adobe-fonts-stylesheet', "https://use.typekit.net/ukq8mny.css", array(), '1.0', 'all' );
     }
@@ -18,9 +18,9 @@ function unload_adobe_style_async()
 {
     $CookieConsent = array_column(array_map(function ($pair) {
         return explode(':', $pair);
-    }, explode(',', $_COOKIE['cookieyes-consent'] ?? '')), 1, 0);
+    }, explode(',', $_COOKIE['cookieyes-consent'])), 1, 0);
 
-    if (filter_var($CookieConsent['functional'] ?? false, FILTER_VALIDATE_BOOLEAN)) 
+    if (filter_var($CookieConsent['functional'], FILTER_VALIDATE_BOOLEAN)) 
     {
         return;
     }

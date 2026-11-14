@@ -7,7 +7,7 @@
 ?>
 
 <?php get_header(); ?>
-<div class="body-container bg-teal" style="padding-top: 200px;">
+<div class="body-container bg-teal home-top-body burger-toggle">
 
     <?php
         $img = get_image_data(get_field('home_top_image'));
@@ -15,15 +15,17 @@
     ?>
 
     <div class="home-top">
-        <h2>Finest Real Estates Meets Urban Life</h2>
+        <h2 class="home-top-title-above desktop">Finest Real Estates Meets Urban Life</h2>
         <div class="home-top-title-image-container">
             <div class="home-top-image" alt="<?php echo $img['alt']; ?>" <?php echo $style;?>>
+                <div class="home-top-image-overlay"></div>
                 <div class="home-top-title">
                     <h3>Forever</h1>
                     <h4>Home</h1>
                 </div>          
             </div>
         </div>
+        <h2 class="home-top-title-below mobile">Finest Properties</h2>
     </div>
 </div>
 
@@ -59,26 +61,27 @@
 </div>
 
 <div class="body-container bg-teal home-bottom-main-menu top-border" style="padding-top: 0px;">    
-    <div class="button-container-left" style="margin-bottom: 47px;">
-        <nav class="row">
-            <?php        
-                $menu_items = wp_get_nav_menu_items('home-bottom-main-menu');
-                if($menu_items)
-                {
-                    foreach($menu_items as $menu_item)
+    <div class="body_content_container">
+        <div class="button-container-left" style="margin-bottom: 47px;">
+            <nav class="row">
+                <?php        
+                    $menu_items = wp_get_nav_menu_items('home-bottom-main-menu');
+                    if($menu_items)
                     {
-                        $title = $menu_item->title;
-                        $url = $menu_item->url;     
-                        echo button(['text' => $title, 'link' => $url]);
+                        foreach($menu_items as $menu_item)
+                        {
+                            $title = $menu_item->title;
+                            $url = $menu_item->url;     
+                            echo button(['text' => $title, 'link' => $url]);
+                        }
                     }
-                }
-
-                // echo do_shortcode('[button_mail text="Kontakt"]');
-            ?> 
-            
-        </nav>
-    </div>        
-   
+                    
+                    // echo do_shortcode('[button_mail text="Kontakt"]');
+                    ?> 
+                
+            </nav>
+        </div>        
+    </div>    
 </div>
 
 <?php get_footer(); ?>

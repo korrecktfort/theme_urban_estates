@@ -1,12 +1,9 @@
 <?php
-
-use function PHPSTORM_META\type;
-
     $id = get_post_meta(get_the_ID(), 'related_immomakler_id', true);
 
     $district = get_post_meta($id, 'ort', true);
     $title = get_post_meta($id, 'objekttitel', true);
-    $summary = get_the_excerpt($id);
+    $summary = get_post_meta($id, 'dreizeiler', true);
     $type = get_post_meta($id, 'objektart', true);
 
     $propertySize = get_post_meta($id, 'grundstuecksflaeche', true);
@@ -39,6 +36,15 @@ use function PHPSTORM_META\type;
 
 <div class="body-container bg-cream">
     <div class="body_content_container">
+
+        <div class="mobile mobile-button-expose-container">
+            <button class="button button-teal mobile-button-expose" onClick = "scrollToBottom()"><div class="arrow"></div><p>Exposé anfordern</p></button>
+        </div>
+
+        <div class="mobile-s mobile-button-expose-container">
+            <button class="button button-teal mobile-button-expose" onClick = "scrollToBottom()"><div class="arrow"></div><p>Exposé anfordern</p></button>
+        </div>
+
         <div class="entry-summary__data-pairs teal" style="margin-bottom: 47.5px;">
             
             <?php 
@@ -86,56 +92,98 @@ use function PHPSTORM_META\type;
             }
             ?>           
         </div>
-
+    
         <div class="separator-beige"></div>
-        
-        <div class="entry-bullets-title">
-            <h2>Daten und Fakten</h2>
+
+        <div class="blockdesktop"> 
+            
+                <div class="entry-bullets-title">
+                    <h2>Daten und Fakten</h2>
+                </div>
+
+                <div class="entry-bullets-container">
+                    <?php         
+                    foreach($bulletPoints as $bulletPoint)
+                    {
+                    ?>
+                        <div class="entry-bullets__item">
+                            <p><?php echo $bulletPoint; ?></p>
+                        </div>  
+                    <?php            
+                    }
+                    ?>
+                </div>
+            </div>
         </div>
 
-        <div class="entry-bullets-container">
-            <?php         
-            foreach($bulletPoints as $bulletPoint)
-            {
-            ?>
-                <div class="entry-bullets__item">
-                    <p><?php echo $bulletPoint; ?></p>
-                </div>  
-            <?php            
+        <?php                    
+        $bulletPointsHtml = '';
+        foreach($bulletPoints as $bulletPoint) {
+            $bulletPointsHtml .= '<div class="entry-bullets__item"><p>' . $bulletPoint . '</p></div>';
             }
             ?>
+
+        <div class="mobile">            
+            <?php
+            get_template_part('template-parts/entry-bottom-text-block', null, array(
+                'title' => 'Daten und Fakten',
+                'text' => $bulletPointsHtml,
+                'id' => '3',
+                'ellipsis_class' => 'cream',
+                ));
+                ?>
         </div>
+
+         <div class="mobile-s">           
+                <?php
+            get_template_part('template-parts/entry-bottom-text-block', null, array(
+                'title' => 'Daten und Fakten',
+                'text' => $bulletPointsHtml,
+                'id' => '4',
+                'ellipsis_class' => 'cream',
+                ));
+                ?>
+        </div>
+        
     </div>
 </div>
 
 <!-- Bottom Banderole -->
-<div class="bg-teal entry-banderole font-cream">
-    <div class="entry-banderole__container__wrapper">
+ <div class="desktop">
+    <div class="bg-teal entry-banderole font-cream">
+        <div class="entry-banderole__container__wrapper">
 
-        <div class="entry-banderole__container">
-            <div class="entry-banderole__container__item">
-                <?php echo do_shortcode('[data_living_space value="' . $livingSpace . '"]'); ?>
+            <div class="entry-banderole__container">
+                <div class="entry-banderole__container__item">
+                    <?php echo do_shortcode('[data_living_space value="' . $livingSpace . '"]'); ?>
+                </div>
+                
+                <div class="entry-banderole__container__item">
+                    <?php echo do_shortcode('[data_rooms value="' . $rooms . '"]'); ?>
+                </div>
+                
+                <div class="entry-banderole__container__item">
+                    <?php echo do_shortcode('[data_price value="' . $purchasePrice . '"]'); ?>
+                </div>
             </div>
-            
-            <div class="entry-banderole__container__item">
-                <?php echo do_shortcode('[data_rooms value="' . $rooms . '"]'); ?>
+
+            <div class="entry-banderole__container">
+                <div class="entry-banderole__container__item">            
+                <?php echo do_shortcode('[button_expose]');?>
+                </div>
             </div>
-            
-            <div class="entry-banderole__container__item">
-                <?php echo do_shortcode('[data_price value="' . $purchasePrice . '"]'); ?>
-            </div>
+
         </div>
-
-        <div class="entry-banderole__container">
-            <div class="entry-banderole__container__item">            
-            <?php echo do_shortcode('[button_expose]');?>
-            </div>
-        </div>
-
     </div>
 </div>
 
+
+
 <script>
+function scrollToBottom() {
+    document.getElementById('expose-form').scrollIntoView({ behavior: 'smooth' });
+}
+
 function styleLastRow() {
   const container = document.querySelector('.entry-bullets-container');
   const items = container.querySelectorAll('.entry-bullets__item');

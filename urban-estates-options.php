@@ -37,6 +37,11 @@ $options_sections = array(
                 'type' => 'email'
             ),
             array(
+                'id' => 'j_email',
+                'label' => 'Julien Email',
+                'type' => 'email'
+            ),
+            array(
                 'id' => 'main-logo-cream',
                 'label' => 'Main Logo Cream',
                 'type' => 'image'
@@ -218,13 +223,32 @@ function get_ue_option($field_name){
 
 function get_image_data($image_url) {
     $image_data = array();
+
+    if (empty($image_url)) {
+        return $image_data;
+    }
+
     $attachment_id = attachment_url_to_postid($image_url);
-    
+
+    // Fallback for content imported from a different domain: attachment_url_to_postid()
+    // only matches if $image_url still starts with the current site's upload base URL,
+    // so rebuild the URL using the current baseurl and retry via the relative path.
+    if (!$attachment_id) {
+        $url_path = wp_parse_url($image_url, PHP_URL_PATH);
+        $upload_dir = wp_get_upload_dir();
+        $base_path = wp_parse_url($upload_dir['baseurl'], PHP_URL_PATH);
+
+        if ($url_path && $base_path && strpos($url_path, $base_path) === 0) {
+            $rebuilt_url = $upload_dir['baseurl'] . substr($url_path, strlen($base_path));
+            $attachment_id = attachment_url_to_postid($rebuilt_url);
+        }
+    }
+
     if ($attachment_id) {
         $image_data['url'] = wp_get_attachment_url($attachment_id);
         $image_data['alt'] = get_post_meta($attachment_id, '_wp_attachment_image_alt', true);
-    } 
-    
+    }
+
     return $image_data;
 }
 ?>

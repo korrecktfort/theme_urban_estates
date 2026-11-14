@@ -5,6 +5,10 @@ $main_logo_cream = get_image_data(get_ue_option('main-logo-cream'));
 $main_logo_teal = get_image_data(get_ue_option('main-logo-teal'));
 $main_logo;
 
+if(isset($args['labels-color'])):
+    $color_label = $args['labels-color'];
+endif;
+
 switch($color_label)
 {
     case 'Cream':               
@@ -18,44 +22,44 @@ switch($color_label)
         }        
 ?>
 
-
 <div class="top-bar-main <?php echo $color_class;?> burger-toggle">
     <div class="top-bar-main-container">
 
+        <!-- Location Buttons or Breadcrumbs-->
         <?php 
         if(is_front_page()){
         ?>
-        <div class="top-bar-item">
-            <div class="button-container-top-bar">
-                <?php echo do_shortcode('[button_location text="Berlin" slug="immobilien"]'); ?>
+        <div class="top-bar-item location-buttons">
+            <div class="button-container-top-bar burger-toggle">
+                <?php echo do_shortcode('[button_location text="Berlin" slug="berlin"]'); ?>
                 <?php echo do_shortcode('[button_location text="Potsdam" slug="potsdam"]'); ?>
                 <?php echo do_shortcode('[button_location text="Hamburg" slug="hamburg"]'); ?>
             </div>
         </div>
-
         <?php 
         }else{
         ?>
-
         <div class="top-bar-item top-bar-breadcrumbs <?php echo $color_class;?> burger-toggle">            
-            <?php echo get_breadcrumbs(); ?>
+            <?php echo get_breadcrumbs($args); ?>
         </div>
-
         <?php
         };
         ?>
         
-
-        <div class="top-bar-item top-bar-page-title">
-            <div class="burger-toggle hide-on-burger-active">
-                <img src="<?php echo $main_logo['url']; ?>" alt="<?php echo $main_logo['alt']; ?>" />
+        <!-- Main Logo -->
+        <a href="<?php echo get_home_url(); ?>">            
+            <div class="top-bar-item top-bar-page-title">
+                <div class="burger-toggle hide-on-burger-active">
+                <a href="<?php echo get_home_url(); ?>"> <img src="<?php echo $main_logo['url']; ?>" alt="<?php echo $main_logo['alt']; ?>" /></a>
+                </div>
+                
+                <div class="burger-toggle display-on-burger-active">
+                <a href="<?php echo get_home_url(); ?>"><img src="<?php echo $main_logo_cream['url']; ?>" alt="<?php echo $main_logo_cream['alt']; ?>" /></a>
+                </div>
             </div>
-            
-            <div class="burger-toggle display-on-burger-active">
-                <img src="<?php echo $main_logo_cream['url']; ?>" alt="<?php echo $main_logo_cream['alt']; ?>" />
-            </div>
-        </div>
+        </a>
 
+        <!-- Burger -->
         <div id="burger-menu-btn" class="top-bar-item burger-menu">
             <div class="burger-menu-container">
                 <div class="burger-toggle burger-menu-cross cream"></div>
