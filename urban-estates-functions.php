@@ -23,7 +23,9 @@ function get_urban_estate_posts($attr)
             $related_immomakler_id = get_post_meta(get_the_ID(), 'related_immomakler_id', true);
             
             $displayReferences = array_key_exists('references', $attr) && $attr['references'];
-            $isReference = get_post_meta($related_immomakler_id, 'verkaufstatus', true) == 'VERKAUFT';
+            // 'verkaufstatus' postmeta doesn't exist; status is the 'immomakler_object_status'
+            // taxonomy, so sold and rented properties go to the references section together.
+            $isReference = \ImmoMakler\Data\Property_Status::is_sold_or_rented($related_immomakler_id);
 
             if($displayReferences && !$isReference || !$displayReferences && $isReference)
             {
